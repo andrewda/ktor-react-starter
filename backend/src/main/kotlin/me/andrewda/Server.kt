@@ -15,6 +15,7 @@ import io.ktor.routing.routing
 import me.andrewda.constants.Constants.RESOURCE_INDEX
 import me.andrewda.constants.Constants.RESOURCE_STATIC
 import me.andrewda.constants.Constants.STATIC_ROUTE
+import me.andrewda.constants.Endpoints.API
 import me.andrewda.constants.Endpoints.ApiEndpoints
 import me.andrewda.constants.Endpoints.ROOT
 import org.slf4j.event.Level
@@ -25,7 +26,7 @@ fun Application.main() {
     }
 
     routing {
-        route("/api") {
+        route(API) {
             get(ApiEndpoints.PING) {
                 call.respondText("pong", ContentType.Text.Plain)
             }
