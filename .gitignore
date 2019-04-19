@@ -42,8 +42,7 @@ out/
 
 build/
 
-backend/src/main/resources/frontend/*
-!backend/src/main/resources/frontend/.gitkeep
+backend/src/main/resources/frontend
 
 # Frontend
 
