@@ -4,11 +4,14 @@ import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.features.CallLogging
-import io.ktor.http.ContentType
+import io.ktor.features.ContentNegotiation
+import io.ktor.features.StatusPages
+import io.ktor.gson.gson
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.resource
 import io.ktor.http.content.resources
 import io.ktor.http.content.static
-import io.ktor.response.respondText
+import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.route
@@ -19,6 +22,8 @@ import me.andrewda.constants.Constants.RESOURCE_INDEX
 import me.andrewda.constants.Constants.RESOURCE_STATIC_DIRECTORY
 import me.andrewda.constants.Routes
 import me.andrewda.constants.Routes.ApiEndpoints
+import me.andrewda.utils.Response
+import me.andrewda.utils.Status
 import org.slf4j.event.Level
 
 fun Application.main() {
@@ -26,10 +31,24 @@ fun Application.main() {
         level = Level.INFO
     }
 
+    install(StatusPages) {
+        status(HttpStatusCode.NotFound) {
+            call.respond(Status.fromHttpStatusCode(it))
+        }
+    }
+
+    install(ContentNegotiation) {
+        gson {
+            setPrettyPrinting()
+            enableComplexMapKeySerialization()
+            excludeFieldsWithoutExposeAnnotation()
+        }
+    }
+
     routing {
         route(Routes.API) {
             get(ApiEndpoints.PING) {
-                call.respondText("pong", ContentType.Text.Plain)
+                call.respond(Response("pong"))
             }
         }
 
