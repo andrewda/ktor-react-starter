@@ -8,6 +8,7 @@ import io.ktor.features.ContentNegotiation
 import io.ktor.features.StatusPages
 import io.ktor.gson.gson
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.content.defaultResource
 import io.ktor.http.content.resource
 import io.ktor.http.content.resources
 import io.ktor.http.content.static
@@ -50,6 +51,11 @@ fun Application.main() {
             get(ApiEndpoints.PING) {
                 call.respond(Response("pong"))
             }
+
+            // Route any unspecified API requests to 404
+            get("{...}") {
+                call.respond(HttpStatusCode.NotFound)
+            }
         }
 
         frontend()
@@ -57,19 +63,17 @@ fun Application.main() {
 }
 
 fun Route.frontend() {
-    static(Routes.STATIC) {
-        resources(RESOURCE_STATIC_DIRECTORY)
-    }
-
     static("/") {
-        resource("/", RESOURCE_INDEX)
-
         BASE_RESOURCES.forEach {
             resource(it, "$RESOURCE_DIRECTORY/$it")
         }
     }
 
-    static("*") {
-        resource("/", RESOURCE_INDEX)
+    static(Routes.STATIC) {
+        resources(RESOURCE_STATIC_DIRECTORY)
+    }
+
+    static("{...}") {
+        defaultResource(RESOURCE_INDEX)
     }
 }
