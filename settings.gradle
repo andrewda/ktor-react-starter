@@ -1,0 +1,4 @@
+rootProject.name = 'ktor-react-starter'
+
+include 'backend'
+include 'frontend'

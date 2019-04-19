@@ -1,0 +1,33 @@
+plugins {
+    id "org.jetbrains.kotlin.jvm" version "1.3.30"
+    id "java"
+    id "application"
+}
+
+version "1.0.0"
+
+mainClassName = "io.ktor.server.netty.DevelopmentEngine"
+
+sourceCompatibility = 1.8
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "io.ktor:ktor-server-netty:$ktor_version"
+    implementation "ch.qos.logback:logback-classic:$logback_version"
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+task cleanStatic(type: Delete) {
+    delete "src/main/resources/frontend"
+}
+
+task deployStatic(type: Copy, dependsOn: "cleanStatic") {
+    from fileTree("../frontend/build")
+    into "src/main/resources/frontend"
+}
