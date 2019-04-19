@@ -9,15 +9,16 @@ import io.ktor.http.content.resource
 import io.ktor.http.content.resources
 import io.ktor.http.content.static
 import io.ktor.response.respondText
+import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.route
 import io.ktor.routing.routing
+import me.andrewda.constants.Constants.BASE_RESOURCES
+import me.andrewda.constants.Constants.RESOURCE_DIRECTORY
 import me.andrewda.constants.Constants.RESOURCE_INDEX
-import me.andrewda.constants.Constants.RESOURCE_STATIC
-import me.andrewda.constants.Constants.STATIC_ROUTE
-import me.andrewda.constants.Endpoints.API
-import me.andrewda.constants.Endpoints.ApiEndpoints
-import me.andrewda.constants.Endpoints.ROOT
+import me.andrewda.constants.Constants.RESOURCE_STATIC_DIRECTORY
+import me.andrewda.constants.Routes
+import me.andrewda.constants.Routes.ApiEndpoints
 import org.slf4j.event.Level
 
 fun Application.main() {
@@ -26,18 +27,30 @@ fun Application.main() {
     }
 
     routing {
-        route(API) {
+        route(Routes.API) {
             get(ApiEndpoints.PING) {
                 call.respondText("pong", ContentType.Text.Plain)
             }
         }
 
-        static {
-            resource(ROOT, RESOURCE_INDEX)
+        frontend()
+    }
+}
 
-            static(STATIC_ROUTE) {
-                resources(RESOURCE_STATIC)
-            }
+fun Route.frontend() {
+    static(Routes.STATIC) {
+        resources(RESOURCE_STATIC_DIRECTORY)
+    }
+
+    static("/") {
+        resource("/", RESOURCE_INDEX)
+
+        BASE_RESOURCES.forEach {
+            resource(it, "$RESOURCE_DIRECTORY/$it")
         }
+    }
+
+    static("*") {
+        resource("/", RESOURCE_INDEX)
     }
 }

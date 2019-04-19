@@ -1,8 +1,8 @@
 package me.andrewda.constants
 
-object Endpoints {
-    const val ROOT = "/"
+object Routes {
     const val API = "/api"
+    const val STATIC = "/static"
 
     object ApiEndpoints {
         const val PING = "/ping"
