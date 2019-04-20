@@ -21,12 +21,10 @@ object Database {
 
     fun init() {
         val transaction = TransactionManager.currentOrNew(Connection.TRANSACTION_REPEATABLE_READ)
-
         SchemaUtils.createMissingTablesAndColumns(Users)
-
         transaction.commit()
 
-        println("Database initiated.")
+        println("Database initiated")
     }
 }
 
