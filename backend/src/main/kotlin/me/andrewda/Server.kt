@@ -23,11 +23,20 @@ import me.andrewda.constants.Constants.RESOURCE_INDEX
 import me.andrewda.constants.Constants.RESOURCE_STATIC_DIRECTORY
 import me.andrewda.constants.Routes
 import me.andrewda.constants.Routes.ApiEndpoints
+import me.andrewda.utils.Database
 import me.andrewda.utils.Response
 import me.andrewda.utils.Status
+import me.andrewda.utils.Users
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.transactions.transaction
 import org.slf4j.event.Level
+import java.util.*
+import kotlin.streams.asSequence
 
 fun Application.main() {
+    Database.init()
+
     install(CallLogging) {
         level = Level.INFO
     }
@@ -45,6 +54,8 @@ fun Application.main() {
             excludeFieldsWithoutExposeAnnotation()
         }
     }
+
+    val source = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890"
 
     routing {
         route(Routes.API) {

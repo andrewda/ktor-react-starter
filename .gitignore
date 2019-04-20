@@ -42,6 +42,7 @@ out/
 
 build/
 
+backend/src/main/resources/db.txt
 backend/src/main/resources/frontend
 
 # Frontend
