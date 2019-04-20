@@ -55,8 +55,6 @@ fun Application.main() {
         }
     }
 
-    val source = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890"
-
     routing {
         route(Routes.API) {
             get(ApiEndpoints.PING) {
