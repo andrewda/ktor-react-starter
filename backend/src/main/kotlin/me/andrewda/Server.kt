@@ -26,13 +26,7 @@ import me.andrewda.constants.Routes.ApiEndpoints
 import me.andrewda.utils.Database
 import me.andrewda.utils.Response
 import me.andrewda.utils.Status
-import me.andrewda.utils.Users
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.transactions.transaction
 import org.slf4j.event.Level
-import java.util.*
-import kotlin.streams.asSequence
 
 fun Application.main() {
     Database.init()
