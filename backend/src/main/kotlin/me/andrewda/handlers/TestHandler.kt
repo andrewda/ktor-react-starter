@@ -6,7 +6,7 @@ import io.ktor.routing.Route
 import io.ktor.routing.get
 import me.andrewda.utils.Response
 
-fun Route.testApi() {
+fun Route.test() {
     get("/ping") {
         call.respond(Response("pong"))
     }

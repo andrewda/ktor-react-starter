@@ -14,8 +14,8 @@ import io.ktor.routing.route
 import io.ktor.routing.routing
 import me.andrewda.constants.Routes
 import me.andrewda.handlers.frontend
-import me.andrewda.handlers.testApi
-import me.andrewda.handlers.userApi
+import me.andrewda.handlers.test
+import me.andrewda.handlers.user
 import me.andrewda.utils.Database
 import me.andrewda.utils.Status
 import org.slf4j.event.Level
@@ -43,8 +43,8 @@ fun Application.main() {
 
     routing {
         route(Routes.API) {
-            userApi()
-            testApi()
+            user()
+            test()
 
             // Route any unspecified API requests to 404
             get("{...}") {

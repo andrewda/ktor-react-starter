@@ -11,7 +11,7 @@ import me.andrewda.controllers.UserController
 import me.andrewda.models.NewUser
 import me.andrewda.utils.Response
 
-fun Route.userApi() {
+fun Route.user() {
     get("/users") {
         val users = UserController.findAll()
 
