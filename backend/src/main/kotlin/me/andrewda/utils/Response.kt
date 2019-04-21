@@ -34,4 +34,3 @@ suspend inline fun ApplicationCall.respond(
         response.pipeline.execute(this, Response(message, success = responseSuccess))
     }
 }
-
