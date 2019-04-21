@@ -1,10 +1,14 @@
 package me.andrewda.utils
 
+import com.zaxxer.hikari.HikariDataSource
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import me.andrewda.models.Users
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.exposedLogger
 import org.jetbrains.exposed.sql.transactions.TransactionManager
+import org.jetbrains.exposed.sql.transactions.transaction
 import java.sql.Connection
 
 object Database {
@@ -17,7 +21,11 @@ object Database {
         "mysql://root:root@localhost:3306/ktor-app"
     }
 
-    private val connection = Database.connect("jdbc:$url", driver = "com.mysql.cj.jdbc.Driver")
+    val ds = HikariDataSource().apply {
+        jdbcUrl = "jdbc:$url"
+    }
+
+    private val connection = Database.connect(ds)
 
     fun init() {
         val transaction = TransactionManager.currentOrNew(Connection.TRANSACTION_REPEATABLE_READ)
@@ -28,9 +36,6 @@ object Database {
     }
 }
 
-object Users : Table() {
-    val id = varchar("id", 10).primaryKey()
-    val username = varchar("username", 20)
-    val email = varchar("email", 50)
-    val name = varchar("name", 50)
+suspend fun <T> query(block: () -> T): T = withContext(Dispatchers.IO) {
+    transaction { block() }
 }

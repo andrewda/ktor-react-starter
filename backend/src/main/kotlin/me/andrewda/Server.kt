@@ -12,20 +12,22 @@ import io.ktor.http.content.defaultResource
 import io.ktor.http.content.resource
 import io.ktor.http.content.resources
 import io.ktor.http.content.static
+import io.ktor.request.receiveOrNull
 import io.ktor.response.respond
-import io.ktor.routing.Route
-import io.ktor.routing.get
-import io.ktor.routing.route
-import io.ktor.routing.routing
+import io.ktor.routing.*
 import me.andrewda.constants.Constants.BASE_RESOURCES
 import me.andrewda.constants.Constants.RESOURCE_DIRECTORY
 import me.andrewda.constants.Constants.RESOURCE_INDEX
 import me.andrewda.constants.Constants.RESOURCE_STATIC_DIRECTORY
 import me.andrewda.constants.Routes
 import me.andrewda.constants.Routes.ApiEndpoints
+import me.andrewda.models.NewUser
+import me.andrewda.models.User
+import me.andrewda.models.Users
 import me.andrewda.utils.Database
 import me.andrewda.utils.Response
 import me.andrewda.utils.Status
+import me.andrewda.utils.query
 import org.slf4j.event.Level
 
 fun Application.main() {
@@ -37,6 +39,10 @@ fun Application.main() {
 
     install(StatusPages) {
         status(HttpStatusCode.NotFound) {
+            call.respond(Status.fromHttpStatusCode(it))
+        }
+
+        status(HttpStatusCode.InternalServerError) {
             call.respond(Status.fromHttpStatusCode(it))
         }
     }
@@ -53,6 +59,45 @@ fun Application.main() {
         route(Routes.API) {
             get(ApiEndpoints.PING) {
                 call.respond(Response("pong"))
+            }
+
+            get("/users") {
+                val users = query {
+                    User.all().toList()
+                }
+
+                call.respond(Response(users.map { it.api }))
+            }
+
+            get("/users/{username}") {
+                val username = call.parameters["username"] ?: ""
+                val user = query {
+                    User.find { Users.username eq username }.firstOrNull()
+                }
+
+                if (user != null) {
+                    call.respond(Response(user.api))
+                } else {
+                    call.respond(HttpStatusCode.NotFound)
+                }
+            }
+
+            post("/users") {
+                val newUser = call.receiveOrNull<NewUser>()
+
+                if (newUser != null && newUser.isValid) {
+                    val user = query {
+                        User.new {
+                            username = newUser.username ?: ""
+                            name = newUser.name ?: ""
+                            email = newUser.email ?: ""
+                        }
+                    }
+
+                    call.respond(Response(user.api))
+                } else {
+                    call.respond(HttpStatusCode.BadRequest)
+                }
             }
 
             // Route any unspecified API requests to 404
