@@ -14,7 +14,6 @@ import me.andrewda.utils.Response
 fun Route.user() {
     get("/users") {
         val users = UserController.findAll()
-
         call.respond(Response(users.map { it.api }))
     }
 
@@ -34,7 +33,6 @@ fun Route.user() {
 
         if (newUser != null && newUser.isValid) {
             val user = UserController.create(newUser)
-
             call.respond(Response(user.api))
         } else {
             call.respond(HttpStatusCode.BadRequest)
