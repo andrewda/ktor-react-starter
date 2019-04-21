@@ -27,8 +27,8 @@ suspend inline fun ApplicationCall.respond(
 ) {
     response.status(status)
 
-    if (message is Response<*>) {
-        response.pipeline.execute(this, message)
+    if (message is Response<*> || message == null) {
+        response.pipeline.execute(this, message ?: status)
     } else {
         val responseSuccess = success ?: (status.value < 400)
         response.pipeline.execute(this, Response(message, success = responseSuccess))
