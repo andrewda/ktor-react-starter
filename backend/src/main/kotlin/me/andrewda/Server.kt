@@ -38,11 +38,7 @@ fun Application.main() {
     }
 
     install(StatusPages) {
-        status(HttpStatusCode.NotFound) {
-            call.respond(Status.fromHttpStatusCode(it))
-        }
-
-        status(HttpStatusCode.InternalServerError) {
+        status(HttpStatusCode.NotFound, HttpStatusCode.InternalServerError) {
             call.respond(Status.fromHttpStatusCode(it))
         }
     }
