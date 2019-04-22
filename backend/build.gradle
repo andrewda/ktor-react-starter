@@ -4,8 +4,6 @@ plugins {
     id "application"
 }
 
-version "1.0.0"
-
 mainClassName = "io.ktor.server.netty.DevelopmentEngine"
 
 sourceCompatibility = 1.8

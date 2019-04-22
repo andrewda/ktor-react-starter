@@ -14,11 +14,19 @@ import java.sql.Connection
 object Database {
     private val databaseConfig = javaClass.getResource("/db.txt")
 
-    private val url = if (databaseConfig != null) {
-        databaseConfig.readText().trim()
-    } else {
-        exposedLogger.warn("Could not find db.txt, falling back to default address")
-        "mysql://root:root@localhost:3306/ktor-app"
+    private val envHost = System.getenv("DATABASE_HOST") ?: ""
+    private val envUser = System.getenv("DATABASE_USER") ?: ""
+    private val envPassword = System.getenv("DATABASE_PASSWORD") ?: ""
+    private val envDatabase = System.getenv("DATABASE_NAME") ?: ""
+    private val envPort = System.getenv("DATABASE_PORT") ?: ""
+
+    private val url = when {
+        envDatabase.isNotEmpty() -> "mysql://$envUser:$envPassword@$envHost:$envPort/$envDatabase"
+        databaseConfig != null -> databaseConfig.readText().trim()
+        else -> {
+            exposedLogger.warn("Could not find db.txt, falling back to default address")
+            "mysql://root:root@localhost:3306/ktor-app"
+        }
     }
 
     val ds = HikariDataSource().apply {
