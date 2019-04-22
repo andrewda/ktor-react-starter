@@ -34,5 +34,5 @@ $ docker build -t webapp .
 Once the image is done, start the web server and MySQL database with:
 
 ```bash
-$ docker-composer up
+$ docker-compose up
 ```
