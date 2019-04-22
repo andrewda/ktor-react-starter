@@ -8,6 +8,8 @@ mainClassName = "io.ktor.server.netty.DevelopmentEngine"
 
 sourceCompatibility = 1.8
 
+build.dependsOn "deployStatic"
+
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "ch.qos.logback:logback-classic:$logback_version"

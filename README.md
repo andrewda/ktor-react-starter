@@ -8,7 +8,6 @@ To run the program, use the commands below:
 
 ```bash
 $ ./gradlew build         # builds the frontend/backend
-$ ./gradlew deployStatic  # deploys generated frontend
 $ ./gradlew :backend:run  # runs the backend server
 ```
 
@@ -24,13 +23,11 @@ Then you can reach the frontend at `http://127.0.0.1:3000`.
 
 ## Docker
 
-First, you'll need to build the `webapp` Docker image. However, before you can, you must build the app by following
-the commands below:
+First, you'll need to build the `webapp` Docker image. However, before you can, you must first build the app. This can
+all be done by following the commands below:
 
 ```bash
-$ ./gradlew :frontend:build
-$ ./gradlew deployStatic
-$ ./gradlew :backend:build
+$ ./gradlew build
 $ docker build -f Dockerfile -t webapp .
 ```
 

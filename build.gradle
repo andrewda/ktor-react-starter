@@ -25,3 +25,10 @@ allprojects {
 task clean(type: Delete) {
     delete "build"
 }
+
+task buildBackend(dependsOn: "backend:build")
+task buildFrontend(dependsOn: "frontend:build") {
+    finalizedBy buildBackend
+}
+
+task build(dependsOn: [buildFrontend, buildBackend])
