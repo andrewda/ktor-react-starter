@@ -28,7 +28,7 @@ all be done by following the commands below:
 
 ```bash
 $ ./gradlew build
-$ docker build -f Dockerfile -t webapp .
+$ docker build -t webapp .
 ```
 
 Once the image is done, start the web server and MySQL database with:
