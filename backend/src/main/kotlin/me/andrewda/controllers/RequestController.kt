@@ -20,6 +20,10 @@ object RequestController {
             if (request.quantity != null) {
                 quantity = request.quantity
             }
+
+            if (request.fulfilled != null) {
+                fulfilled = request.fulfilled
+            }
         }
     }
 
