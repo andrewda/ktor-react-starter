@@ -13,9 +13,7 @@ import io.ktor.routing.get
 import io.ktor.routing.route
 import io.ktor.routing.routing
 import me.andrewda.constants.Routes
-import me.andrewda.handlers.frontend
-import me.andrewda.handlers.test
-import me.andrewda.handlers.user
+import me.andrewda.handlers.*
 import me.andrewda.utils.Database
 import me.andrewda.utils.Status
 import org.slf4j.event.Level
@@ -28,7 +26,7 @@ fun Application.main() {
     }
 
     install(StatusPages) {
-        status(HttpStatusCode.NotFound, HttpStatusCode.InternalServerError) {
+        status(HttpStatusCode.NotFound, HttpStatusCode.BadRequest, HttpStatusCode.InternalServerError) {
             call.respond(Status.fromHttpStatusCode(it))
         }
     }
@@ -44,6 +42,10 @@ fun Application.main() {
     routing {
         route(Routes.API) {
             user()
+            person()
+            item()
+            request()
+
             test()
 
             // Route any unspecified API requests to 404

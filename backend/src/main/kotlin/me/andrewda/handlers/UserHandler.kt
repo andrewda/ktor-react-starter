@@ -5,6 +5,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.request.receiveOrNull
 import io.ktor.routing.Route
 import io.ktor.routing.get
+import io.ktor.routing.patch
 import io.ktor.routing.post
 import me.andrewda.controllers.UserController
 import me.andrewda.models.NewUser
@@ -16,8 +17,19 @@ fun Route.user() {
         call.respond(users.map { it.api })
     }
 
+    post("/users") {
+        val newUser = call.receiveOrNull<NewUser>()
+
+        if (newUser != null && newUser.isValid && newUser.isFormatted) {
+            val user = UserController.create(newUser)
+            call.respond(user.api)
+        } else {
+            call.respond(status = HttpStatusCode.BadRequest)
+        }
+    }
+
     get("/users/{username}") {
-        val username = call.parameters["username"] ?: ""
+        val username = call.parameters["username"] ?: return@get
         val user = UserController.findByUsername(username)
 
         if (user != null) {
@@ -27,14 +39,21 @@ fun Route.user() {
         }
     }
 
-    post("/users") {
+    patch("/users/{username}") {
+        val username = call.parameters["username"] ?: ""
         val newUser = call.receiveOrNull<NewUser>()
 
-        if (newUser != null && newUser.isValid && newUser.isFormatted) {
-            val user = UserController.create(newUser)
+        if (newUser == null) {
+            call.respond(status = HttpStatusCode.BadRequest)
+            return@patch
+        }
+
+        val user = UserController.patch(username, newUser)
+
+        if (user != null) {
             call.respond(user.api)
         } else {
-            call.respond(status = HttpStatusCode.BadRequest)
+            call.respond(status = HttpStatusCode.NotFound)
         }
     }
 }

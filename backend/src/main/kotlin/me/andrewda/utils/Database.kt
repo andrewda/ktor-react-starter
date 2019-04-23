@@ -3,6 +3,9 @@ package me.andrewda.utils
 import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import me.andrewda.models.Items
+import me.andrewda.models.People
+import me.andrewda.models.Requests
 import me.andrewda.models.Users
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -33,11 +36,11 @@ object Database {
         jdbcUrl = "jdbc:$url"
     }
 
-    private val connection = Database.connect(ds)
+    val connection = Database.connect(ds)
 
     fun init() {
         val transaction = TransactionManager.currentOrNew(Connection.TRANSACTION_REPEATABLE_READ)
-        SchemaUtils.createMissingTablesAndColumns(Users)
+        SchemaUtils.createMissingTablesAndColumns(Users, Items, Requests, People)
         transaction.commit()
 
         println("Database initiated")
