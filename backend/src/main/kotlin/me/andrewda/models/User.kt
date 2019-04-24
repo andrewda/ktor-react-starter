@@ -21,6 +21,7 @@ object Users : IntIdTable() {
     val username = varchar("username", 20).uniqueIndex()
     val name = varchar("name", 50)
     val email = varchar("email", 50)
+    val password = varchar("password", 255)
 }
 
 class User(id: EntityID<Int>) : IntEntity(id) {
@@ -36,6 +37,7 @@ class User(id: EntityID<Int>) : IntEntity(id) {
     var username by Users.username
     var name by Users.name
     var email by Users.email
+    var password by Users.password
 
     val api get() = ApiUser(id.value, username, name, email)
 }
