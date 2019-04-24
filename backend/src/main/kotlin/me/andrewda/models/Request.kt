@@ -1,7 +1,8 @@
 package me.andrewda.models
 
 import com.google.gson.annotations.Expose
-import me.andrewda.utils.query
+import me.andrewda.utils.ReadLevel
+import me.andrewda.utils.Readable
 import org.jetbrains.exposed.dao.EntityID
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
@@ -24,46 +25,29 @@ object Requests : IntIdTable() {
 }
 
 class Request(id: EntityID<Int>) : IntEntity(id) {
-    companion object : IntEntityClass<Request>(Requests) {
-        data class ApiRequest(
-            @Expose val id: Int,
-            @Expose val personId: Int,
-            @Expose val itemId: Int,
-            @Expose val quantity: Int,
-            @Expose val fulfilled: Int,
-            @Expose val complete: Boolean
-        )
+    companion object : IntEntityClass<Request>(Requests)
 
-        data class ApiDeepRequest(
-            @Expose val id: Int,
-            @Expose val personId: Int,
-            @Expose val person: Person.Companion.ApiPerson?,
-            @Expose val itemId: Int,
-            @Expose val item: Item.Companion.ApiItem?,
-            @Expose val quantity: Int,
-            @Expose val fulfilled: Int,
-            @Expose val complete: Boolean,
-            @Expose val totalPrice: Double
-        )
-    }
-
+    @Readable
     var personId by Requests.person
+
+    @Readable
     var itemId by Requests.item
+
+    @Readable
     var quantity by Requests.quantity
+
+    @Readable(readLevel = ReadLevel.ADMIN)
     var fulfilled by Requests.fulfilled
 
+    @Readable
+    val complete get() = fulfilled >= quantity
+
+    @Readable(deep = true)
     inline val person get() = Person.findById(personId)
+
+    @Readable(deep = true)
     inline val item get() = Item.findById(itemId)
 
-    val complete get() = fulfilled >= quantity
+    @Readable(deep = true)
     inline val totalPrice get() = (item?.price ?: 0.0) * quantity
-
-    val api get() = ApiRequest(id.value, personId.value, itemId.value, quantity, fulfilled, complete)
-
-    suspend fun getDeepApi(populatePerson: Boolean = false, populateItem: Boolean = true) = query {
-        val person = if (populatePerson) person?.api else null
-        val item = if (populateItem) item?.api else null
-
-        ApiDeepRequest(id.value, personId.value, person, itemId.value, item, quantity, fulfilled, complete, totalPrice)
-    }
 }

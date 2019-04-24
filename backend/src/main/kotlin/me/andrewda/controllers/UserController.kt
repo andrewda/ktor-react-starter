@@ -1,6 +1,8 @@
 package me.andrewda.controllers
 
-import me.andrewda.models.*
+import me.andrewda.models.NewUser
+import me.andrewda.models.User
+import me.andrewda.models.Users
 import me.andrewda.utils.query
 
 object UserController {

@@ -1,6 +1,8 @@
 package me.andrewda.models
 
 import com.google.gson.annotations.Expose
+import me.andrewda.utils.ReadLevel
+import me.andrewda.utils.Readable
 import org.jetbrains.exposed.dao.EntityID
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
@@ -23,28 +25,17 @@ object Items : IntIdTable() {
 }
 
 class Item(id: EntityID<Int>) : IntEntity(id) {
-    companion object : IntEntityClass<Item>(Items) {
-        data class ApiItem(
-            @Expose val id: Int,
-            @Expose val name: String,
-            @Expose val image: String?,
-            @Expose val price: Double
-        )
+    companion object : IntEntityClass<Item>(Items)
 
-        data class ApiAdminItem(
-            @Expose val id: Int,
-            @Expose val name: String,
-            @Expose val image: String?,
-            @Expose val price: Double,
-            @Expose val inventory: Int?
-        )
-    }
-
+    @Readable
     var name by Items.name
-    var image by Items.image
-    var price by Items.price
-    var inventory by Items.inventory
 
-    val api get() = ApiItem(id.value, name, image?.toString(), price)
-    val apiAdmin get() = ApiAdminItem(id.value, name, image?.toString(), price, inventory)
+    @Readable
+    var image by Items.image
+
+    @Readable
+    var price by Items.price
+
+    @Readable(readLevel = ReadLevel.ADMIN)
+    var inventory by Items.inventory
 }
