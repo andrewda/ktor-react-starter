@@ -31,9 +31,7 @@ annotation class Readable(
  * @return the generated [ApiResponse]
  */
 fun Entity<*>.getApiResponse(readLevel: ReadLevel = ReadLevel.USER): ApiResponse {
-    val result = mutableMapOf<String, Any?>(
-        "id" to null
-    )
+    val result = mutableMapOf<String, Any?>()
 
     this::class.memberProperties.forEach {
         val annotation = it.annotations.find { it is Readable } as? Readable
@@ -86,7 +84,6 @@ suspend fun Entity<*>.getDeepApiResponse(readLevel: ReadLevel = ReadLevel.USER, 
             } else {
                 annotation.key
             }
-
 
             if (readLevel >= annotation.readLevel && annotation.deep) {
                 val value = it.getter.call(this)
