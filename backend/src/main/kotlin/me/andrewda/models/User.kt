@@ -1,6 +1,7 @@
 package me.andrewda.models
 
 import com.google.gson.annotations.Expose
+import me.andrewda.utils.Readable
 import me.andrewda.utils.containsOrFalse
 import org.jetbrains.exposed.dao.EntityID
 import org.jetbrains.exposed.dao.IntEntity
@@ -25,19 +26,16 @@ object Users : IntIdTable() {
 }
 
 class User(id: EntityID<Int>) : IntEntity(id) {
-    companion object : IntEntityClass<User>(Users) {
-        data class ApiUser(
-            @Expose val id: Int,
-            @Expose val username: String,
-            @Expose val name: String,
-            val email: String
-        )
-    }
+    companion object : IntEntityClass<User>(Users)
 
+    @Readable
     var username by Users.username
-    var name by Users.name
-    var email by Users.email
-    var password by Users.password
 
-    val api get() = ApiUser(id.value, username, name, email)
+    @Readable
+    var name by Users.name
+
+    @Readable
+    var email by Users.email
+
+    var password by Users.password
 }

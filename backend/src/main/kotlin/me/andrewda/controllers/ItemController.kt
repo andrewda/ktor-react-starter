@@ -1,6 +1,7 @@
 package me.andrewda.controllers
 
-import me.andrewda.models.*
+import me.andrewda.models.Item
+import me.andrewda.models.NewItem
 import me.andrewda.utils.Database
 import me.andrewda.utils.query
 

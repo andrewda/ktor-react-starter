@@ -9,12 +9,13 @@ import io.ktor.routing.patch
 import io.ktor.routing.post
 import me.andrewda.controllers.ItemController
 import me.andrewda.models.NewItem
+import me.andrewda.utils.getApiResponse
 import me.andrewda.utils.respond
 
 fun Route.item() {
     get("/items") {
         val items = ItemController.findAll()
-        call.respond(items.map { it.api })
+        call.respond(items.map { it.getApiResponse() })
     }
 
     post("/items") {
@@ -22,7 +23,7 @@ fun Route.item() {
 
         if (newItem != null && newItem.isValid) {
             val user = ItemController.create(newItem)
-            call.respond(user.api)
+            call.respond(user.getApiResponse())
         } else {
             call.respond(status = HttpStatusCode.BadRequest)
         }
@@ -34,7 +35,7 @@ fun Route.item() {
         val item = ItemController.findById(id)
 
         if (item != null) {
-            call.respond(item.api)
+            call.respond(item.getApiResponse())
         } else {
             call.respond(status = HttpStatusCode.NotFound)
         }
@@ -52,7 +53,7 @@ fun Route.item() {
         val item = ItemController.patch(id, newItem)
 
         if (item != null) {
-            call.respond(item.api)
+            call.respond(item.getApiResponse())
         } else {
             call.respond(status = HttpStatusCode.NotFound)
         }
