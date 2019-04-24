@@ -3,7 +3,10 @@ package me.andrewda.handlers
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.receiveOrNull
-import io.ktor.routing.*
+import io.ktor.routing.Route
+import io.ktor.routing.get
+import io.ktor.routing.patch
+import io.ktor.routing.post
 import me.andrewda.controllers.RequestController
 import me.andrewda.models.NewRequest
 import me.andrewda.utils.getDeepApiResponse

@@ -8,7 +8,6 @@ import io.ktor.routing.get
 import io.ktor.routing.patch
 import io.ktor.routing.post
 import me.andrewda.controllers.ItemController
-import me.andrewda.utils.ReadLevel
 import me.andrewda.models.NewItem
 import me.andrewda.utils.getApiResponse
 import me.andrewda.utils.respond
