@@ -6,12 +6,13 @@ import io.ktor.request.receiveOrNull
 import io.ktor.routing.*
 import me.andrewda.controllers.RequestController
 import me.andrewda.models.NewRequest
+import me.andrewda.utils.getDeepApiResponse
 import me.andrewda.utils.respond
 
 fun Route.request() {
     get("/requests") {
         val requests = RequestController.findAll()
-        call.respond(requests.map { it.getDeepApi() })
+        call.respond(requests.map { it.getDeepApiResponse() })
     }
 
     post("/requests") {
@@ -21,7 +22,7 @@ fun Route.request() {
             val request = RequestController.create(newRequest)
 
             if (request != null) {
-                call.respond(request.getDeepApi())
+                call.respond(request.getDeepApiResponse())
             } else {
                 call.respond(status = HttpStatusCode.BadRequest)
             }
@@ -36,7 +37,7 @@ fun Route.request() {
         val request = RequestController.findById(id)
 
         if (request != null) {
-            call.respond(request.getDeepApi())
+            call.respond(request.getDeepApiResponse())
         } else {
             call.respond(status = HttpStatusCode.NotFound)
         }
@@ -54,7 +55,7 @@ fun Route.request() {
         val request = RequestController.patch(id, newRequest)
 
         if (request != null) {
-            call.respond(request.getDeepApi())
+            call.respond(request.getDeepApiResponse())
         } else {
             call.respond(status = HttpStatusCode.NotFound)
         }

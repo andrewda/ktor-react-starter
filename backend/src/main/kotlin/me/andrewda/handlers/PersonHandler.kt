@@ -6,12 +6,13 @@ import io.ktor.request.receiveOrNull
 import io.ktor.routing.*
 import me.andrewda.controllers.PersonController
 import me.andrewda.models.NewPerson
+import me.andrewda.utils.getApiResponse
 import me.andrewda.utils.respond
 
 fun Route.person() {
     get("/people") {
         val people = PersonController.findAll()
-        call.respond(people.map { it.api })
+        call.respond(people.map { it.getApiResponse() })
     }
 
     post("/people") {
@@ -20,7 +21,7 @@ fun Route.person() {
         if (newPerson != null && newPerson.isValid) {
             val request = PersonController.create(newPerson)
 
-            call.respond(request.api)
+            call.respond(request.getApiResponse())
         } else {
             call.respond(status = HttpStatusCode.BadRequest)
         }
@@ -32,7 +33,7 @@ fun Route.person() {
         val person = PersonController.findBySlug(slug)
 
         if (person != null) {
-            call.respond(person.api)
+            call.respond(person.getApiResponse())
         } else {
             call.respond(status = HttpStatusCode.NotFound)
         }
@@ -50,7 +51,7 @@ fun Route.person() {
         val person = PersonController.patch(slug, newPerson)
 
         if (person != null) {
-            call.respond(person.api)
+            call.respond(person.getApiResponse())
         } else {
             call.respond(status = HttpStatusCode.NotFound)
         }

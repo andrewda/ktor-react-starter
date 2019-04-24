@@ -1,6 +1,7 @@
 package me.andrewda.models
 
 import com.google.gson.annotations.Expose
+import me.andrewda.utils.Readable
 import org.jetbrains.exposed.dao.EntityID
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
@@ -23,19 +24,17 @@ object People : IntIdTable() {
 }
 
 class Person(id: EntityID<Int>) : IntEntity(id) {
-    companion object : IntEntityClass<Person>(People) {
-        data class ApiPerson(
-            @Expose val id: Int,
-            @Expose val name: String,
-            @Expose val image: String?,
-            @Expose val bio: String
-        )
-    }
+    companion object : IntEntityClass<Person>(People)
 
+    @Readable
     var name by People.name
-    var image by People.image
-    var bio by People.bio
-    var slug by People.slug
 
-    val api get() = ApiPerson(id.value, name, image?.toString(), bio)
+    @Readable
+    var image by People.image
+
+    @Readable
+    var bio by People.bio
+
+    @Readable
+    var slug by People.slug
 }
