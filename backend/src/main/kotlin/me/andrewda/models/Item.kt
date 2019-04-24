@@ -38,7 +38,4 @@ class Item(id: EntityID<Int>) : IntEntity(id) {
 
     @Readable(readLevel = ReadLevel.ADMIN)
     var inventory by Items.inventory
-
-    @Readable(deep = true)
-    inline val something get() = User.findById(1)
 }

@@ -36,7 +36,7 @@ fun Route.item() {
         val item = ItemController.findById(id)
 
         if (item != null) {
-            call.respond(item.getApiResponse(ReadLevel.ADMIN))
+            call.respond(item.getApiResponse())
         } else {
             call.respond(status = HttpStatusCode.NotFound)
         }
