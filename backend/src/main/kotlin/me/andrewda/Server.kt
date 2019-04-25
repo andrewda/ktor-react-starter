@@ -44,7 +44,7 @@ fun Application.main() {
     }
 
     install(StatusPages) {
-        status {
+        status(*HttpStatusCode.allStatusCodes.toTypedArray()) {
             call.respond(Status.fromHttpStatusCode(it))
         }
 
