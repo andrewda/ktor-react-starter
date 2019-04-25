@@ -75,17 +75,6 @@ fun Application.main() {
 
             test()
 
-            authenticate {
-                authenticate {
-                    route("secret") {
-                        get {
-                            val user = call.userPrincipal!!
-                            call.respond(user.id)
-                        }
-                    }
-                }
-            }
-
             // Route any unspecified API requests to 404
             get("{...}") {
                 call.respond(HttpStatusCode.NotFound)
