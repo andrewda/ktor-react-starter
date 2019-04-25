@@ -1,61 +1,52 @@
 package me.andrewda.handlers
 
 import io.ktor.application.call
-import io.ktor.http.HttpStatusCode
+import io.ktor.auth.authenticate
 import io.ktor.request.receiveOrNull
-import io.ktor.routing.Route
-import io.ktor.routing.get
-import io.ktor.routing.patch
-import io.ktor.routing.post
+import io.ktor.routing.*
+import me.andrewda.authentication.AuthLevel
 import me.andrewda.controllers.ItemController
 import me.andrewda.models.NewItem
-import me.andrewda.utils.getApiResponse
-import me.andrewda.utils.respond
+import me.andrewda.utils.*
 
 fun Route.item() {
-    get("/items") {
-        val items = ItemController.findAll()
-        call.respond(items.map { it.getApiResponse() })
-    }
-
-    post("/items") {
-        val newItem = call.receiveOrNull<NewItem>()
-
-        if (newItem != null && newItem.isValid) {
-            val user = ItemController.create(newItem)
-            call.respond(user.getApiResponse())
-        } else {
-            call.respond(status = HttpStatusCode.BadRequest)
+    route("/items") {
+        get {
+            val items = ItemController.findAll()
+            call.respond(items.map { it.getApiResponse() })
         }
-    }
 
-    get("/items/{id}") {
-        val id = call.parameters["id"]?.toIntOrNull() ?: return@get
+        get("/{id}") {
+            val id = call.parameters["id"]?.toIntOrNull() ?: throw NotFound()
+            val item = ItemController.findById(id) ?: throw NotFound()
 
-        val item = ItemController.findById(id)
-
-        if (item != null) {
             call.respond(item.getApiResponse())
-        } else {
-            call.respond(status = HttpStatusCode.NotFound)
-        }
-    }
-
-    patch("/items/{id}") {
-        val id = (call.parameters["id"] ?: "").toIntOrNull() ?: return@patch
-        val newItem = call.receiveOrNull<NewItem>()
-
-        if (newItem == null) {
-            call.respond(status = HttpStatusCode.BadRequest)
-            return@patch
         }
 
-        val item = ItemController.patch(id, newItem)
+        authenticate {
+            post {
+                call.ensureAuthLevel(AuthLevel.ADMIN)
 
-        if (item != null) {
-            call.respond(item.getApiResponse())
-        } else {
-            call.respond(status = HttpStatusCode.NotFound)
+                val newItem = call.receiveOrNull<NewItem>() ?: throw MissingFields()
+
+                if (newItem.isValid) {
+                    val user = ItemController.create(newItem)
+                    call.respond(user.getApiResponse())
+                } else {
+                    throw MissingFields()
+                }
+            }
+
+            patch("/{id}") {
+                call.ensureAuthLevel(AuthLevel.ADMIN)
+
+                val id = (call.parameters["id"] ?: "").toIntOrNull() ?: throw NotFound()
+                val newItem = call.receiveOrNull<NewItem>() ?: throw MissingFields()
+
+                val item = ItemController.patch(id, newItem) ?: throw NotFound()
+
+                call.respond(item.getApiResponse())
+            }
         }
     }
 }

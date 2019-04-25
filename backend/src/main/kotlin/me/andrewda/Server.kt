@@ -4,6 +4,7 @@ import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.auth.Authentication
+import io.ktor.auth.authenticate
 import io.ktor.auth.jwt.jwt
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
@@ -21,6 +22,7 @@ import me.andrewda.handlers.*
 import me.andrewda.utils.Database
 import me.andrewda.utils.ExceptionWithStatus
 import me.andrewda.utils.Status
+import me.andrewda.utils.userPrincipal
 import org.slf4j.event.Level
 
 fun Application.main() {
@@ -42,7 +44,7 @@ fun Application.main() {
     }
 
     install(StatusPages) {
-        status(HttpStatusCode.NotFound, HttpStatusCode.BadRequest, HttpStatusCode.InternalServerError) {
+        status {
             call.respond(Status.fromHttpStatusCode(it))
         }
 
@@ -72,6 +74,17 @@ fun Application.main() {
             request()
 
             test()
+
+            authenticate {
+                authenticate {
+                    route("secret") {
+                        get {
+                            val user = call.userPrincipal!!
+                            call.respond(user.id)
+                        }
+                    }
+                }
+            }
 
             // Route any unspecified API requests to 404
             get("{...}") {

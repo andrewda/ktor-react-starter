@@ -8,16 +8,16 @@ import io.ktor.routing.route
 import me.andrewda.authentication.JwtConfig
 import me.andrewda.controllers.UserController
 import me.andrewda.controllers.UserPasswordCredential
-import me.andrewda.utils.InvalidCredentialException
+import me.andrewda.utils.InvalidCredential
 import me.andrewda.utils.respond
 
 fun Route.auth() {
     route("/auth") {
         post("/login") {
             val credentials = call.receive<UserPasswordCredential>()
-            val user = UserController.findByCredentials(credentials) ?: throw InvalidCredentialException()
+            val user = UserController.findByCredentials(credentials) ?: throw InvalidCredential()
             val token = JwtConfig.makeToken(user)
-            call.respond("token" to token)
+            call.respond(mapOf("token" to token))
         }
     }
 }

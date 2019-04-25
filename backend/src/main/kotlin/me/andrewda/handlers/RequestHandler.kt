@@ -1,66 +1,51 @@
 package me.andrewda.handlers
 
 import io.ktor.application.call
-import io.ktor.http.HttpStatusCode
+import io.ktor.auth.authenticate
 import io.ktor.request.receiveOrNull
-import io.ktor.routing.Route
-import io.ktor.routing.get
-import io.ktor.routing.patch
-import io.ktor.routing.post
+import io.ktor.routing.*
 import me.andrewda.controllers.RequestController
 import me.andrewda.models.NewRequest
+import me.andrewda.utils.MissingFields
+import me.andrewda.utils.NotFound
 import me.andrewda.utils.getDeepApiResponse
 import me.andrewda.utils.respond
 
 fun Route.request() {
-    get("/requests") {
-        val requests = RequestController.findAll()
-        call.respond(requests.map { it.getDeepApiResponse() })
-    }
+    route("/requests") {
+        get {
+            val requests = RequestController.findAll()
+            call.respond(requests.map { it.getDeepApiResponse() })
+        }
 
-    post("/requests") {
-        val newRequest = call.receiveOrNull<NewRequest>()
+        get("/{id}") {
+            val id = call.parameters["id"]?.toIntOrNull() ?: throw NotFound()
+            val request = RequestController.findById(id) ?: throw NotFound()
 
-        if (newRequest != null && newRequest.isValid) {
-            val request = RequestController.create(newRequest)
+            call.respond(request.getDeepApiResponse())
+        }
 
-            if (request != null) {
-                call.respond(request.getDeepApiResponse())
-            } else {
-                call.respond(status = HttpStatusCode.BadRequest)
+        authenticate {
+            post {
+                val newRequest = call.receiveOrNull<NewRequest>() ?: throw MissingFields()
+
+                if (newRequest.isValid) {
+                    val request = RequestController.create(newRequest) ?: throw MissingFields()
+
+                    call.respond(request.getDeepApiResponse())
+                } else {
+                    throw MissingFields()
+                }
             }
-        } else {
-            call.respond(status = HttpStatusCode.BadRequest)
-        }
-    }
 
-    get("/requests/{id}") {
-        val id = call.parameters["id"]?.toIntOrNull() ?: return@get
+            patch("/{id}") {
+                val id = (call.parameters["id"] ?: "").toIntOrNull() ?: return@patch
+                val newRequest = call.receiveOrNull<NewRequest>() ?: throw MissingFields()
 
-        val request = RequestController.findById(id)
+                val request = RequestController.patch(id, newRequest) ?: throw NotFound()
 
-        if (request != null) {
-            call.respond(request.getDeepApiResponse())
-        } else {
-            call.respond(status = HttpStatusCode.NotFound)
-        }
-    }
-
-    patch("/requests/{id}") {
-        val id = (call.parameters["id"] ?: "").toIntOrNull() ?: return@patch
-        val newRequest = call.receiveOrNull<NewRequest>()
-
-        if (newRequest == null) {
-            call.respond(status = HttpStatusCode.BadRequest)
-            return@patch
-        }
-
-        val request = RequestController.patch(id, newRequest)
-
-        if (request != null) {
-            call.respond(request.getDeepApiResponse())
-        } else {
-            call.respond(status = HttpStatusCode.NotFound)
+                call.respond(request.getDeepApiResponse())
+            }
         }
     }
 }
