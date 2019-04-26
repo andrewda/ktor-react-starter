@@ -7,9 +7,9 @@ import me.andrewda.models.User
 import java.util.*
 
 object JwtConfig {
-    private const val secret = "zAP5MBA4B4Ijz0MZaS48"
     private const val issuer = "payitforward.com"
     private const val validity = 5 * 24 * 60 * 60 * 1000 // 5 days
+    private val secret = Base64.getEncoder().encodeToString(UUID.randomUUID().toString().toByteArray())
     private val algorithm = Algorithm.HMAC512(secret)
 
     /**
