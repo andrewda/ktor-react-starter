@@ -1,7 +1,7 @@
 package me.andrewda.models
 
 import com.google.gson.annotations.Expose
-import me.andrewda.utils.ReadLevel
+import me.andrewda.authentication.AuthLevel
 import me.andrewda.utils.Readable
 import org.jetbrains.exposed.dao.EntityID
 import org.jetbrains.exposed.dao.IntEntity
@@ -36,6 +36,6 @@ class Item(id: EntityID<Int>) : IntEntity(id) {
     @Readable
     var price by Items.price
 
-    @Readable(readLevel = ReadLevel.ADMIN)
+    @Readable(auth = AuthLevel.ADMIN)
     var inventory by Items.inventory
 }
