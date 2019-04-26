@@ -15,14 +15,17 @@ fun Route.request() {
     route("/requests") {
         get {
             val requests = RequestController.findAll()
-            call.respond(requests.map { it.getDeepApiResponse() })
+            val excluded = call.request.queryParameters.getAll("exclude") ?: emptyList()
+
+            call.respond(requests.map { it.getDeepApiResponse(exclude = excluded) })
         }
 
         get("/{id}") {
             val id = call.parameters["id"]?.toIntOrNull() ?: throw NotFound()
+            val excluded = call.request.queryParameters.getAll("exclude") ?: emptyList()
             val request = RequestController.findById(id) ?: throw NotFound()
 
-            call.respond(request.getDeepApiResponse())
+            call.respond(request.getDeepApiResponse(exclude = excluded))
         }
 
         authenticate {

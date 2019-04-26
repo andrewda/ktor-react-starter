@@ -27,7 +27,10 @@ annotation class Readable(
  * @param authLevel the permission level at which the response should be generated
  * @return the generated [ApiResponse]
  */
-fun Entity<*>.getApiResponse(authLevel: AuthLevel = AuthLevel.USER): ApiResponse {
+fun Entity<*>.getApiResponse(
+    authLevel: AuthLevel = AuthLevel.USER,
+    exclude: List<String> = emptyList()
+): ApiResponse {
     val result = mutableMapOf<String, Any?>()
 
     this::class.memberProperties.forEach {
@@ -38,6 +41,8 @@ fun Entity<*>.getApiResponse(authLevel: AuthLevel = AuthLevel.USER): ApiResponse
         } else {
             annotation?.key ?: ""
         }
+
+        if (exclude.contains(key)) return@forEach
 
         if (key == "id" || annotation != null && authLevel >= annotation.auth && !annotation.deep) {
             val value = it.getter.call(this)
@@ -67,8 +72,12 @@ fun Entity<*>.getApiResponse(authLevel: AuthLevel = AuthLevel.USER): ApiResponse
  * @param additionalDepth the additional number of layers on which to perform [getDeepApiResponse] (0 = none, -1 = all)
  * @return the generated [ApiResponse]
  */
-suspend fun Entity<*>.getDeepApiResponse(authLevel: AuthLevel = AuthLevel.USER, additionalDepth: Int = 0): ApiResponse {
-    val result = getApiResponse(authLevel)
+suspend fun Entity<*>.getDeepApiResponse(
+    authLevel: AuthLevel = AuthLevel.USER,
+    additionalDepth: Int = 0,
+    exclude: List<String> = emptyList()
+): ApiResponse {
+    val result = getApiResponse(authLevel, exclude)
 
     val jobs = mutableListOf<Job>()
 
@@ -81,6 +90,8 @@ suspend fun Entity<*>.getDeepApiResponse(authLevel: AuthLevel = AuthLevel.USER, 
             } else {
                 annotation.key
             }
+
+            if (exclude.contains(key)) return@forEach
 
             if (authLevel >= annotation.auth && annotation.deep) {
                 val value = it.getter.call(this)
