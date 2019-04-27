@@ -1,6 +1,6 @@
-# ktor-react-starter
+# Spark
 
-This is a base starter application for Ktor + React.
+SERT's code for the Spark challenge @ Hack for a Cause 2019.
 
 ## Running
 

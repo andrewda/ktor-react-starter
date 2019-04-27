@@ -12,6 +12,7 @@ allprojects {
         ext.hikari_version = "3.3.1"
         ext.jwt_version = "3.8.0"
         ext.bcrypt_version = "0.4"
+        ext.paypal_version = "1.14.0"
 
         repositories {
             jcenter()

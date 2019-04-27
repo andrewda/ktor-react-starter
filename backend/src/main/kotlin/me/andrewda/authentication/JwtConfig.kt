@@ -13,7 +13,7 @@ object JwtConfig {
     private val algorithm = Algorithm.HMAC512(secret)
 
     /**
-     * Calculate the expiration Date based on current time + the given validity
+     * Calculate the expiration Date based on current time + the given validity.
      */
     private val expiration get() = Date(System.currentTimeMillis() + validity)
 
@@ -23,7 +23,7 @@ object JwtConfig {
         .build()
 
     /**
-     * Produce a token for this combination of User and Account
+     * Produce a token for this [user].
      */
     fun makeToken(user: User): String = JWT.create()
         .withSubject("Authentication")

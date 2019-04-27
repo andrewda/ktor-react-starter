@@ -24,6 +24,7 @@ dependencies {
     implementation "com.zaxxer:HikariCP:$hikari_version"
     implementation "com.auth0:java-jwt:$jwt_version"
     implementation "org.mindrot:jbcrypt:$bcrypt_version"
+    implementation "com.paypal.sdk:rest-api-sdk:$paypal_version"
 }
 
 compileKotlin {
